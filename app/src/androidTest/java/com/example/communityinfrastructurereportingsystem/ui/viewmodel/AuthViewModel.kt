@@ -90,7 +90,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return null
     }
 
-    // Call after the screen has shown the message, so it does not show again
+    // Call after the screen has shown the message, so it does not ever show again
     fun clearMessage() { _message.value = null }
     fun clearRegistered() { _registeredEmail.value = null }
 }

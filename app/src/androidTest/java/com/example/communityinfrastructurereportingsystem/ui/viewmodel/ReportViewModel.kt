@@ -136,7 +136,7 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // Business rules: the app is for Nairobi only
+    // Business rules: app is for Nairobi only
     private fun validate(
         title: String,
         category: String,

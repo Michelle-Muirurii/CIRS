@@ -7,13 +7,11 @@ import java.security.MessageDigest
 
 class UserRepository(private val userDao: UserDao) {
 
-    // Returns the new user's id, or -1 if that email is already registered
     suspend fun register(fullName: String, email: String, password: String): Long {
         val user = User(fullName = fullName, email = email, passwordHash = hash(password))
         return userDao.insertUser(user)
     }
 
-    // Returns the user if email and password match, otherwise null
     suspend fun login(email: String, password: String): User? {
         val user = userDao.getUserByEmail(email) ?: return null
         return if (user.passwordHash == hash(password)) user else null
