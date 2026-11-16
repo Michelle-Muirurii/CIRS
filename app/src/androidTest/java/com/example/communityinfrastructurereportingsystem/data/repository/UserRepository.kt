@@ -19,7 +19,7 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUser(id: Int): User? = userDao.getUserById(id)
 
-    // Creates the county staff account once. If it exists already, IGNORE does nothing.
+    // Creates the county staff account once. If it exists already, IGNORE does nothing
     suspend fun ensureStaffAccount() {
         userDao.insertUser(
             User(

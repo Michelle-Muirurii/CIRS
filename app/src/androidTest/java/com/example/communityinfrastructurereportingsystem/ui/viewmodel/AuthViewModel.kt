@@ -31,7 +31,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val isLoading: LiveData<Boolean> = _isLoading            // show a ProgressBar while true
 
     init {
-        // Make sure the county staff account exists
         viewModelScope.launch { repository.ensureStaffAccount() }
     }
 

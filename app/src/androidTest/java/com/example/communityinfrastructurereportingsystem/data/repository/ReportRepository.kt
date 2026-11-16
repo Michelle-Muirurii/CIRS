@@ -5,7 +5,7 @@ import com.example.communityinfrastructurereportingsystem.data.local.ReportDao
 import com.example.communityinfrastructurereportingsystem.data.model.Report
 
 // The repository is the single door into the report data.
-// The ViewModel talks to it and never touches the DAO directly.
+// The ViewModel talks to it and never touches the DAO directly*
 class ReportRepository(private val reportDao: ReportDao) {
 
     val allReports: LiveData<List<Report>> = reportDao.getAllReports()
