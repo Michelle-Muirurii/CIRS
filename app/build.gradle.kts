@@ -63,6 +63,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.8.5")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
     // Retrofit + Moshi (internet and JSON) and Glide (images)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
@@ -72,6 +74,8 @@ dependencies {
 
     // WorkManager (background tasks)
     implementation("androidx.work:work-runtime-ktx:2.9.1")
+    // Location (GPS) for the "Use my location" button
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
