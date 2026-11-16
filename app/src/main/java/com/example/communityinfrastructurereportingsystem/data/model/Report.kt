@@ -21,4 +21,12 @@ data class Report(
     val reporterName: String,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
-) : Serializable   // lets Safe Args pass a Report between screens, as Tenant does in the labs
+) : Serializable {
+
+    /**
+     * Summary helper function for UI listing (similar to summary() in Lab 8)
+     */
+    fun summary(): String {
+        return "Report: $title\nCategory: $category\nArea: $area\nStatus: $status"
+    }
+}
