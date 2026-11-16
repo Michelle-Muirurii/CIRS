@@ -17,29 +17,18 @@ import kotlinx.coroutines.launch
 
 class ReportViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Build the data layer once: database -> DAO -> repository
     private val repository = ReportRepository(CirsDatabase.getDatabase(application).reportDao())
 
-    // ── 1. THE DATA ─────────────────────────────────────────
-    // Before the first load this has no value yet: screens can show a ProgressBar
-    // while allReports.value == null (the "loading" state)
     val allReports: LiveData<List<Report>> = repository.allReports
-
-    // "Empty" state: true when there are no reports, so the screen shows a message
     val isEmpty: LiveData<Boolean> = allReports.map { it.isEmpty() }
-
-    // ── 2. TEXT READY FOR THE SCREENS (map makes a new LiveData) ──────
     val reportCountText: LiveData<String> = allReports.map { "Reports\n${it.size}" }
 
     val pendingCount: LiveData<Int> = repository.countByStatus(ReportStatus.PENDING)
     val inProgressCount: LiveData<Int> = repository.countByStatus(ReportStatus.IN_PROGRESS)
     val resolvedCount: LiveData<Int> = repository.countByStatus(ReportStatus.RESOLVED)
 
-    // ── 3. STAFF FILTER ─────────────────────────────────────
-    // null means "do not filter on this"
     private val filter = MutableLiveData(Pair<String?, String?>(null, null))
 
-    // switchMap: when the filter changes, ask Room for a new list
     val filteredReports: LiveData<List<Report>> = filter.switchMap { (status, category) ->
         repository.filterReports(status, category)
     }
@@ -48,22 +37,18 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
         filter.value = Pair(status, category)
     }
 
-    // ── 4. UI STATE: saving and feedback ────────────────────
     private val _isSaving = MutableLiveData(false)
-    val isSaving: LiveData<Boolean> = _isSaving         // show a ProgressBar while true
+    val isSaving: LiveData<Boolean> = _isSaving
 
     private val _message = MutableLiveData<String?>()
-    val message: LiveData<String?> = _message           // "Report submitted", errors...
+    val message: LiveData<String?> = _message
 
     fun clearMessage() { _message.value = null }
 
-    // ── 5. READ: lists for particular screens ───────────────
     fun reportsForUser(userId: Int): LiveData<List<Report>> = repository.reportsByUser(userId)
     fun reportById(id: Int): LiveData<Report?> = repository.reportById(id)
     fun reportsInArea(area: String): LiveData<List<Report>> = repository.reportsByArea(area)
 
-    // ── 6. CREATE ───────────────────────────────────────────
-    // Returns an error message, or null if the input was valid
     fun addReport(
         title: String,
         category: String,
@@ -93,8 +78,6 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
         return null
     }
 
-    // ── 7. UPDATE ───────────────────────────────────────────
-    // Edit a report's details (the resident's edit screen)
     fun updateReport(report: Report): String? {
         val error = validate(
             report.title, report.category, report.description,
@@ -107,7 +90,6 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
         return null
     }
 
-    // Change only the status (the staff screen)
     fun updateStatus(report: Report, newStatus: String): String? {
         if (newStatus !in ReportStatus.all) return "Choose a valid status"
 
@@ -116,13 +98,10 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
         return null
     }
 
-    // ── 8. DELETE ───────────────────────────────────────────
     fun deleteReport(report: Report) {
         save("Report deleted") { repository.deleteReport(report) }
     }
 
-    // ── Helpers ─────────────────────────────────────────────
-    // Runs a database action in a coroutine and reports success or failure
     private fun save(successMessage: String, action: suspend () -> Unit) {
         viewModelScope.launch {
             _isSaving.value = true

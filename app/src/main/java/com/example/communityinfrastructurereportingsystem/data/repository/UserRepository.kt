@@ -19,7 +19,6 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUser(id: Int): User? = userDao.getUserById(id)
 
-    // Creates the county staff account once. If it exists already, IGNORE does nothing
     suspend fun ensureStaffAccount() {
         userDao.insertUser(
             User(
@@ -31,8 +30,6 @@ class UserRepository(private val userDao: UserDao) {
         )
     }
 
-    // Turns a password into a fixed-length code so the real password is never stored.
-    // (Fine for this course project; real apps also add a random "salt".)
     private fun hash(password: String): String {
         val bytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }

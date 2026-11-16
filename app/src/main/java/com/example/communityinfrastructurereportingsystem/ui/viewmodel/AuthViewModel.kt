@@ -11,30 +11,24 @@ import com.example.communityinfrastructurereportingsystem.data.model.User
 import com.example.communityinfrastructurereportingsystem.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
-// AndroidViewModel: a ViewModel that receives the Application (safe to keep).
-// No Toast, no View, no Activity in here: screens show the messages.
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Build the data layer once: database -> DAO -> repository
     private val repository = UserRepository(CirsDatabase.getDatabase(application).userDao())
 
-    // PRIVATE and MUTABLE: only this ViewModel changes them
     private val _currentUser = MutableLiveData<User?>()
     private val _registeredEmail = MutableLiveData<String?>()
     private val _message = MutableLiveData<String?>()
     private val _isLoading = MutableLiveData(false)
 
-    // PUBLIC and READ-ONLY: screens can watch them, not change them
-    val currentUser: LiveData<User?> = _currentUser          // set after a successful login
-    val registeredEmail: LiveData<String?> = _registeredEmail // set after a successful register
-    val message: LiveData<String?> = _message                // error/feedback text for the screen
-    val isLoading: LiveData<Boolean> = _isLoading            // show a ProgressBar while true
+    val currentUser: LiveData<User?> = _currentUser
+    val registeredEmail: LiveData<String?> = _registeredEmail
+    val message: LiveData<String?> = _message
+    val isLoading: LiveData<Boolean> = _isLoading
 
     init {
         viewModelScope.launch { repository.ensureStaffAccount() }
     }
 
-    // Returns an error message, or null if the input is valid (same idea as Lab 8)
     fun register(fullName: String, email: String, password: String): String? {
         val cleanName = fullName.trim()
         val cleanEmail = email.trim().lowercase()
@@ -89,7 +83,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return null
     }
 
-    // Call after the screen has shown the message, so it does not ever show again
+    fun logout() {
+        _currentUser.value = null
+    }
+
     fun clearMessage() { _message.value = null }
     fun clearRegistered() { _registeredEmail.value = null }
 }
