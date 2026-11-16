@@ -3,7 +3,6 @@ package com.example.communityinfrastructurereportingsystem.data.model
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.io.Serializable
 
 // The unique index on email stops two accounts using the same email
 @Entity(tableName = "users", indices = [Index(value = ["email"], unique = true)])
@@ -13,4 +12,4 @@ data class User(
     val email: String,
     val passwordHash: String,            // never store a plain password
     val role: String = UserRole.RESIDENT
-) : Serializable
+)
