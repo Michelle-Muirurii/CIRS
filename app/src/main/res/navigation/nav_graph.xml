@@ -14,8 +14,8 @@
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
         <action
-            android:id="@+id/action_loginFragment_to_reportListFragment"
-            app:destination="@id/reportListFragment"
+            android:id="@+id/action_loginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
         <action
@@ -38,34 +38,56 @@
     </fragment>
 
     <fragment
-        android:id="@+id/reportListFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.report.ReportListFragment"
-        android:label="My Reports"
-        tools:layout="@layout/fragment_report_list">
+        android:id="@+id/dashboardFragment"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard">
         <action
-            android:id="@+id/action_reportListFragment_to_createReportFragment"
-            app:destination="@id/createReportFragment" />
+            android:id="@+id/action_dashboardFragment_to_submitReportFragment"
+            app:destination="@id/submitReportFragment" />
         <action
-            android:id="@+id/action_reportListFragment_to_reportDetailFragment"
-            app:destination="@id/reportDetailFragment" />
-        <action
-            android:id="@+id/action_reportListFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/reportListFragment"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_dashboardFragment_to_myReportsFragment"
+            app:destination="@id/myReportsFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/createReportFragment"
+        android:id="@+id/myReportsFragment"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.reports.MyReportsFragment"
+        android:label="My Reports"
+        tools:layout="@layout/fragment_my_reports">
+        <action
+            android:id="@+id/action_myReportsFragment_to_reportDetailsFragment"
+            app:destination="@id/reportDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/submitReportFragment"
         android:name="com.example.communityinfrastructurereportingsystem.ui.report.CreateReportFragment"
-        android:label="New Report"
+        android:label="Submit Report"
         tools:layout="@layout/fragment_create_report" />
 
     <fragment
-        android:id="@+id/reportDetailFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.report.ReportDetailFragment"
+        android:id="@+id/reportDetailsFragment"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.reports.ReportDetailsFragment"
         android:label="Report Details"
-        tools:layout="@layout/fragment_report_detail" />
+        tools:layout="@layout/fragment_report_details">
+        <argument
+            android:name="reportId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_reportDetailsFragment_to_editReportFragment"
+            app:destination="@id/editReportFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editReportFragment"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.reports.EditReportFragment"
+        android:label="Edit Report"
+        tools:layout="@layout/fragment_edit_report">
+        <argument
+            android:name="reportId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/staffDashboardFragment"
@@ -73,8 +95,8 @@
         android:label="County Staff Dashboard"
         tools:layout="@layout/fragment_staff_dashboard">
         <action
-            android:id="@+id/action_staffDashboardFragment_to_reportDetailFragment"
-            app:destination="@id/reportDetailFragment" />
+            android:id="@+id/action_staffDashboardFragment_to_reportDetailsFragment"
+            app:destination="@id/reportDetailsFragment" />
         <action
             android:id="@+id/action_staffDashboardFragment_to_loginFragment"
             app:destination="@id/loginFragment"
