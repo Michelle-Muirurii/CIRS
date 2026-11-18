@@ -78,14 +78,34 @@
             android:text="OPEN IN MAPS"
             android:visibility="gone" />
 
-        <!-- Person 6 puts the staff status controls inside this layout -->
+        <!-- STAFF ONLY: change the status of the report -->
         <LinearLayout
             android:id="@+id/staffControlsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="vertical"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/statusSpinner"
+                android:text="Update status"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/statusSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+
+            <Button
+                android:id="@+id/updateStatusButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="UPDATE STATUS" />
+        </LinearLayout>
 
         <!-- Only the owner of a Pending report sees these two -->
         <LinearLayout

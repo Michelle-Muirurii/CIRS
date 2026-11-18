@@ -43,4 +43,8 @@ interface ReportDao {
     // For the staff dashboard counts
     @Query("SELECT COUNT(*) FROM reports WHERE status = :status")
     fun countByStatus(status: String): LiveData<Int>
+
+    // One-time read (no LiveData) for the background worker
+    @Query("SELECT * FROM reports WHERE reporterId = :userId")
+    suspend fun getReportsByUserOnce(userId: Int): List<Report>
 }
