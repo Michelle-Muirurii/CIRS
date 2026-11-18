@@ -35,11 +35,11 @@ class ReportAdapter(
 
     // The ViewHolder keeps the row's views, so we look them up only once per row
     class ReportViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val photo: ImageView = itemView.findViewById(R.id.ivPhoto)
-        val title: TextView = itemView.findViewById(R.id.tvTitle)
-        val details: TextView = itemView.findViewById(R.id.tvDetails)
-        val status: TextView = itemView.findViewById(R.id.tvStatus)
-        val date: TextView = itemView.findViewById(R.id.tvDate)
+        val photo = itemView.findViewById<ImageView>(R.id.ivPhoto)
+        val title = itemView.findViewById<TextView>(R.id.tvTitle)
+        val details = itemView.findViewById<TextView>(R.id.tvDetails)
+        val status = itemView.findViewById<TextView>(R.id.tvStatus)
+        val date = itemView.findViewById<TextView>(R.id.tvDate)
     }
 
     // Called only a few times: it creates a new row from item_report.xml
@@ -54,6 +54,7 @@ class ReportAdapter(
     // Called every time a row scrolls into view: fill the (recycled) row with this report
     override fun onBindViewHolder(holder: ReportViewHolder, position: Int) {
         val report = reports[position]
+
         holder.title.text = report.title
         holder.details.text = "${report.category} - ${report.area}"
         holder.status.text = report.status
@@ -69,6 +70,7 @@ class ReportAdapter(
             Glide.with(holder.itemView).clear(holder.photo)
             holder.photo.setImageResource(android.R.drawable.ic_menu_gallery)
         }
+
         holder.itemView.setOnClickListener { onItemClick(report) }
     }
 

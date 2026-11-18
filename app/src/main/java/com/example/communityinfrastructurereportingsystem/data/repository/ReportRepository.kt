@@ -24,4 +24,6 @@ class ReportRepository(private val reportDao: ReportDao) {
     suspend fun updateReport(report: Report) = reportDao.updateReport(report)
 
     suspend fun deleteReport(report: Report) = reportDao.deleteReport(report)
+
+    suspend fun reportsByUserOnce(userId: Int): List<Report> = reportDao.getReportsByUserOnce(userId)
 }

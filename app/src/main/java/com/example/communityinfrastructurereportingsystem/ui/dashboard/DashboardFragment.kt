@@ -20,11 +20,26 @@ import com.example.communityinfrastructurereportingsystem.data.model.ReportStatu
 import com.example.communityinfrastructurereportingsystem.databinding.FragmentDashboardBinding
 import com.example.communityinfrastructurereportingsystem.ui.reports.ReportAdapter
 import com.example.communityinfrastructurereportingsystem.ui.viewmodel.ReportViewModel
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.example.communityinfrastructurereportingsystem.ui.viewmodel.WeatherViewModel
+import com.example.communityinfrastructurereportingsystem.worker.ReportScheduler
+
 
 class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private val reportViewModel: ReportViewModel by activityViewModels()
+
+
+    private val weatherViewModel: WeatherViewModel by activityViewModels()
+
+    // Asks the user to allow notifications (Android 13+)
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     // The list of the sub-county currently chosen in the spinner
     private var areaReports: LiveData<List<Report>>? = null
@@ -44,6 +59,22 @@ class DashboardFragment : Fragment() {
         binding.greetingTextView.text = "Hello, ${session.userName}"
 
         // PERSON 6: observe the weather here and show it in binding.weatherTextView
+
+        // ── WEATHER (API): rain / flood warning for Nairobi ─────
+        binding.weatherTextView.visibility = View.VISIBLE
+        weatherViewModel.weatherText.observe(viewLifecycleOwner) { text ->
+            binding.weatherTextView.text = text
+        }
+        binding.weatherTextView.setOnClickListener { weatherViewModel.loadWeather() }  // tap to retry
+        if (savedInstanceState == null) {
+            weatherViewModel.loadWeather()
+        }
+
+        // ── BACKGROUND WORK: notifications about status changes ──
+        if (savedInstanceState == null) {
+            askNotificationPermission()
+            ReportScheduler.start(requireContext())
+        }
 
         // -- My report counts (worked out from my own list) -----
         reportViewModel.reportsForUser(session.userId).observe(viewLifecycleOwner) { reports ->
@@ -104,6 +135,17 @@ class DashboardFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 

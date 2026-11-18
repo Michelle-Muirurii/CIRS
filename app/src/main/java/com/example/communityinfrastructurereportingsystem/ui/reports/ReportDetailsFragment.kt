@@ -1,5 +1,6 @@
 package com.example.communityinfrastructurereportingsystem.ui.reports
 
+
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -20,13 +21,18 @@ import com.example.communityinfrastructurereportingsystem.data.model.ReportStatu
 import com.example.communityinfrastructurereportingsystem.databinding.FragmentReportDetailsBinding
 import com.example.communityinfrastructurereportingsystem.ui.viewmodel.ReportViewModel
 import java.io.File
+import android.widget.ArrayAdapter
+import com.example.communityinfrastructurereportingsystem.data.model.UserRole
+
 
 class ReportDetailsFragment : Fragment() {
+
     private var _binding: FragmentReportDetailsBinding? = null
     private val binding get() = _binding!!
 
     // SAFE ARGS: the reportId that arrived with the navigation
     private val args: ReportDetailsFragmentArgs by navArgs()
+
     private val reportViewModel: ReportViewModel by activityViewModels()
 
     // The report currently on screen (used by the buttons)
@@ -43,9 +49,24 @@ class ReportDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reportViewModel.clearMessage()   // forget any old message
 
+        reportViewModel.clearMessage()   // forget any old message
         val session = SessionManager(requireContext())
+
+        // STAFF: the status dropdown and its button
+        binding.statusSpinner.adapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, ReportStatus.all
+        )
+        binding.updateStatusButton.setOnClickListener {
+            val report = currentReport ?: return@setOnClickListener
+            // The ViewModel checks the status is valid and saves it
+            val error = reportViewModel.updateStatus(
+                report, binding.statusSpinner.selectedItem.toString()
+            )
+            if (error != null) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         // Load the report from Room by its id. Because it is LiveData,
         // the screen refreshes by itself after an edit or a status change.
@@ -141,8 +162,14 @@ class ReportDetailsFragment : Fragment() {
         binding.editButton.visibility = if (canChange) View.VISIBLE else View.GONE
         binding.deleteButton.visibility = if (canChange) View.VISIBLE else View.GONE
 
-        // PERSON 6: if (session.role == UserRole.STAFF) show binding.staffControlsLayout
-        // and add the status controls inside it
+        // STAFF: show the status controls and select the report's current status
+        val isStaff = session.role == UserRole.STAFF
+        binding.staffControlsLayout.visibility = if (isStaff) View.VISIBLE else View.GONE
+        if (isStaff) {
+            binding.statusSpinner.setSelection(
+                ReportStatus.all.indexOf(report.status).coerceAtLeast(0)
+            )
+        }
     }
 
     override fun onDestroyView() {

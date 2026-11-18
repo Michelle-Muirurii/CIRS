@@ -42,7 +42,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(R.id. action_loginFragment_to_registerFragment)
         }
 
         authViewModel.currentUser.observe(viewLifecycleOwner) { user ->

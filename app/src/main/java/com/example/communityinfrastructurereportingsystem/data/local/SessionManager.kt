@@ -1,40 +1,34 @@
 package com.example.communityinfrastructurereportingsystem.data.local
 
 import android.content.Context
-import android.content.SharedPreferences
+import com.example.communityinfrastructurereportingsystem.data.model.User
+import com.example.communityinfrastructurereportingsystem.data.model.UserRole
 
+// Remembers who is logged in, even after the app is closed (SharedPreferences = a tiny key-value file)
 class SessionManager(context: Context) {
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences("cirs_session", Context.MODE_PRIVATE)
 
-    var userId: Int
-        get() = prefs.getInt("user_id", -1)
-        set(value) = prefs.edit().putInt("user_id", value).apply()
+    private val prefs = context.applicationContext
+        .getSharedPreferences("cirs_session", Context.MODE_PRIVATE)
 
-    var userName: String
-        get() = prefs.getString("user_name", "Resident") ?: "Resident"
-        set(value) = prefs.edit().putString("user_name", value).apply()
-
-    var userEmail: String
-        get() = prefs.getString("user_email", "") ?: ""
-        set(value) = prefs.edit().putString("user_email", value).apply()
-
-    var role: String
-        get() = prefs.getString("user_role", "RESIDENT") ?: "RESIDENT"
-        set(value) = prefs.edit().putString("user_role", value).apply()
-
-    fun saveSession(id: Int, name: String, email: String, userRole: String) {
+    // Called once, right after a successful login
+    fun saveUser(user: User) {
         prefs.edit()
-            .putInt("user_id", id)
-            .putString("user_name", name)
-            .putString("user_email", email)
-            .putString("user_role", userRole)
+            .putInt("user_id", user.id)
+            .putString("user_name", user.fullName)
+            .putString("user_email", user.email)
+            .putString("user_role", user.role)
             .apply()
     }
 
-    fun clearSession() {
-        prefs.edit().clear().apply()
-    }
+    val userId: Int get() = prefs.getInt("user_id", -1)
+    val userName: String get() = prefs.getString("user_name", "") ?: ""
+    val userEmail: String get() = prefs.getString("user_email", "") ?: ""
+    val role: String get() = prefs.getString("user_role", UserRole.RESIDENT) ?: UserRole.RESIDENT
 
     fun isLoggedIn(): Boolean = userId != -1
+
+    // Called on logout
+    fun clear() {
+        prefs.edit().clear().apply()
+    }
 }

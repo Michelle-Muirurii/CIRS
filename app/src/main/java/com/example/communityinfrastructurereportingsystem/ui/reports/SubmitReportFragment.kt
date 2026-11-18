@@ -1,4 +1,4 @@
-package com.example.communityinfrastructurereportingsystem.ui.report
+package com.example.communityinfrastructurereportingsystem.ui.reports
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -19,31 +19,33 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.communityinfrastructurereportingsystem.data.local.SessionManager
 import com.example.communityinfrastructurereportingsystem.data.model.NairobiConfig
 import com.example.communityinfrastructurereportingsystem.data.model.ReportCategory
-import com.example.communityinfrastructurereportingsystem.databinding.FragmentCreateReportBinding
-import com.example.communityinfrastructurereportingsystem.ui.viewmodel.AuthViewModel
+import com.example.communityinfrastructurereportingsystem.databinding.FragmentSubmitReportBinding
 import com.example.communityinfrastructurereportingsystem.ui.viewmodel.ReportViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import java.io.File
 
-class CreateReportFragment : Fragment() {
+class SubmitReportFragment : Fragment() {
 
-    private var _binding: FragmentCreateReportBinding? = null
+    private var _binding: FragmentSubmitReportBinding? = null
     private val binding get() = _binding!!
 
-    private val authViewModel: AuthViewModel by activityViewModels()
+    // Shared with the other screens (same ViewModel instance for the whole MainActivity)
     private val reportViewModel: ReportViewModel by activityViewModels()
 
-    // What the user has added so far (saved on rotation)
-    private var photoPath: String? = null     // confirmed photo
+    // What the user has added so far. Lost on rotation unless we save them (Lab 6, Part B)
+    private var photoPath: String? = null     // photo that is confirmed
     private var pendingPath: String? = null   // file the camera is writing to right now
     private var latitude: Double? = null
     private var longitude: Double? = null
 
-    // ── ACTIVITY RESULT LAUNCHERS (must be created here, not inside a click) ──
+    // ── ACTIVITY RESULT LAUNCHERS ──────────────────────────────
+    // Each one asks another app (or Android) to do something and gives us the answer.
+    // They must be created here, not inside a click.
 
     // 1. Camera: the camera app saves a full-size photo into the Uri we give it
     private val takePhotoLauncher =
@@ -82,6 +84,7 @@ class CreateReportFragment : Fragment() {
             }
         }
 
+    // ── RESTORE after rotation ─────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
@@ -94,6 +97,7 @@ class CreateReportFragment : Fragment() {
         }
     }
 
+    // ── SAVE before rotation ───────────────────────────────────
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("photo_path", photoPath)
@@ -107,54 +111,53 @@ class CreateReportFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCreateReportBinding.inflate(inflater, container, false)
+        _binding = FragmentSubmitReportBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentUser = authViewModel.currentUser.value
-        if (currentUser == null) {
-            findNavController().navigateUp()
-            return
-        }
+        // Forget any old message left by another screen
+        reportViewModel.clearMessage()
 
-        // Dropdowns. The first item is a prompt, not a real choice:
-        // the ViewModel rejects it with "Choose the type of fault".
+        // ── Dropdowns. The first item is a prompt: it is not a real choice,
+        // so the ViewModel rejects it with "Choose the type of fault".
         val categories = listOf("Select fault type") + ReportCategory.all
-        binding.spCategory.adapter = ArrayAdapter(
+        binding.categorySpinner.adapter = ArrayAdapter(
             requireContext(), android.R.layout.simple_spinner_dropdown_item, categories
         )
         val areas = listOf("Select Nairobi sub-county") + NairobiConfig.subCounties
-        binding.spArea.adapter = ArrayAdapter(
+        binding.areaSpinner.adapter = ArrayAdapter(
             requireContext(), android.R.layout.simple_spinner_dropdown_item, areas
         )
 
-        // Show what was restored after a rotation
+        // Show what we restored after a rotation
         if (photoPath != null) showPhoto()
         if (latitude != null && longitude != null) showLocationText()
 
-        binding.btnTakePhoto.setOnClickListener {
+        // ── Buttons ────────────────────────────────────────────
+        binding.takePhotoButton.setOnClickListener {
             val file = createImageFile()
             pendingPath = file.absolutePath
-            // FileProvider turns the private file into a Uri the camera app may write to
+            // FileProvider turns the private file into a Uri the camera app is allowed to write to
             val uri = FileProvider.getUriForFile(
                 requireContext(), "${requireContext().packageName}.fileprovider", file
             )
             takePhotoLauncher.launch(uri)
         }
 
-        binding.btnGallery.setOnClickListener {
+        binding.galleryButton.setOnClickListener {
             pickPhotoLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         }
 
-        binding.btnLocation.setOnClickListener {
+        binding.locationButton.setOnClickListener {
             val hasPermission =
                 ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
@@ -175,37 +178,46 @@ class CreateReportFragment : Fragment() {
             }
         }
 
-        binding.btnSubmit.setOnClickListener {
-            // The ViewModel checks every rule and returns an error text, or null if accepted
+        binding.submitButton.setOnClickListener {
+            val session = SessionManager(requireContext())
+
+            // The ViewModel checks every rule (empty fields, Nairobi only...).
+            // It returns an error text, or null when the report was accepted.
             val error = reportViewModel.addReport(
-                title = binding.etTitle.text.toString(),
-                category = binding.spCategory.selectedItem?.toString() ?: "",
-                description = binding.etDescription.text.toString(),
-                area = binding.spArea.selectedItem?.toString() ?: "",
+                title = binding.titleEditText.text.toString(),
+                category = binding.categorySpinner.selectedItem.toString(),
+                description = binding.descriptionEditText.text.toString(),
+                area = binding.areaSpinner.selectedItem.toString(),
                 latitude = latitude,
                 longitude = longitude,
                 photoPath = photoPath,
-                reporterId = currentUser.id,
-                reporterName = currentUser.fullName
+                reporterId = session.userId,
+                reporterName = session.userName
             )
             if (error != null) {
                 toast(error)
             }
         }
 
+        // ── Watch the ViewModel ────────────────────────────────
+        // Loading state: spinner on, button off while saving
+        reportViewModel.isSaving.observe(viewLifecycleOwner) { saving ->
+            binding.progressBar.visibility = if (saving) View.VISIBLE else View.GONE
+            binding.submitButton.isEnabled = !saving
+        }
+
+        // Feedback: "Report submitted" or "Something went wrong..."
         reportViewModel.message.observe(viewLifecycleOwner) { message ->
             if (message != null) {
                 toast(message)
                 reportViewModel.clearMessage()
                 if (message == "Report submitted") {
-                    findNavController().navigateUp()
+                    // SAFE ARGS: generated from the <action> in nav_graph.xml
+                    findNavController().navigate(
+                        SubmitReportFragmentDirections.actionSubmitReportFragmentToMyReportsFragment()
+                    )
                 }
             }
-        }
-
-        reportViewModel.isSaving.observe(viewLifecycleOwner) { isSaving ->
-            binding.progressBar.visibility = if (isSaving) View.VISIBLE else View.GONE
-            binding.btnSubmit.isEnabled = !isSaving
         }
     }
 
@@ -235,19 +247,19 @@ class CreateReportFragment : Fragment() {
     private fun showPhoto() {
         val path = photoPath ?: return
         if (_binding == null) return
-        Glide.with(this).load(File(path)).centerCrop().into(binding.ivPhoto)
+        Glide.with(this).load(File(path)).centerCrop().into(binding.photoImageView)
     }
 
     private fun showLocationText() {
         val lat = latitude ?: return
         val lng = longitude ?: return
-        binding.tvLocation.text = String.format("Location added: %.5f, %.5f", lat, lng)
+        binding.locationTextView.text = String.format("Location added: %.5f, %.5f", lat, lng)
     }
 
     // We only get here after the permission was granted
     @SuppressLint("MissingPermission")
     private fun fetchLocation() {
-        binding.tvLocation.text = "Getting your location..."
+        binding.locationTextView.text = "Getting your location..."
         val client = LocationServices.getFusedLocationProviderClient(requireActivity())
         client.getCurrentLocation(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
@@ -255,7 +267,7 @@ class CreateReportFragment : Fragment() {
         ).addOnSuccessListener { location ->
             if (_binding == null) return@addOnSuccessListener
             if (location == null) {
-                binding.tvLocation.text = "Could not get location. Turn on GPS and try again."
+                binding.locationTextView.text = "Could not get location. Turn on GPS and try again."
             } else {
                 latitude = location.latitude
                 longitude = location.longitude
@@ -263,7 +275,7 @@ class CreateReportFragment : Fragment() {
             }
         }.addOnFailureListener {
             if (_binding != null) {
-                binding.tvLocation.text = "Could not get location. Try again."
+                binding.locationTextView.text = "Could not get location. Try again."
             }
         }
     }

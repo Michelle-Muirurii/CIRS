@@ -3,40 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/dashboardFragment">
 
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.auth.LoginFragment"
-        android:label="Login"
-        tools:layout="@layout/fragment_login">
-        <action
-            android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
-        <action
-            android:id="@+id/action_loginFragment_to_dashboardFragment"
-            app:destination="@id/dashboardFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_loginFragment_to_staffDashboardFragment"
-            app:destination="@id/staffDashboardFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.auth.RegisterFragment"
-        android:label="Register"
-        tools:layout="@layout/fragment_register">
-        <action
-            android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
+    <!-- RESIDENT: home screen -->
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.example.communityinfrastructurereportingsystem.ui.dashboard.DashboardFragment"
@@ -50,6 +19,19 @@
             app:destination="@id/myReportsFragment" />
     </fragment>
 
+    <!-- RESIDENT: new report; after saving, go to My Reports and Back returns to the Dashboard -->
+    <fragment
+        android:id="@+id/submitReportFragment"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.reports.SubmitReportFragment"
+        android:label="Submit Report"
+        tools:layout="@layout/fragment_submit_report">
+        <action
+            android:id="@+id/action_submitReportFragment_to_myReportsFragment"
+            app:destination="@id/myReportsFragment"
+            app:popUpTo="@id/dashboardFragment" />
+    </fragment>
+
+    <!-- RESIDENT: list of my reports -->
     <fragment
         android:id="@+id/myReportsFragment"
         android:name="com.example.communityinfrastructurereportingsystem.ui.reports.MyReportsFragment"
@@ -60,12 +42,7 @@
             app:destination="@id/reportDetailsFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/submitReportFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.report.CreateReportFragment"
-        android:label="Submit Report"
-        tools:layout="@layout/fragment_create_report" />
-
+    <!-- Shared by residents and staff. Receives the report id (Safe Args) -->
     <fragment
         android:id="@+id/reportDetailsFragment"
         android:name="com.example.communityinfrastructurereportingsystem.ui.reports.ReportDetailsFragment"
@@ -89,19 +66,14 @@
             app:argType="integer" />
     </fragment>
 
+    <!-- STAFF: home screen -->
     <fragment
         android:id="@+id/staffDashboardFragment"
-        android:name="com.example.communityinfrastructurereportingsystem.ui.staff.StaffDashboardFragment"
-        android:label="County Staff Dashboard"
+        android:name="com.example.communityinfrastructurereportingsystem.ui.dashboard.StaffDashboardFragment"
+        android:label="Staff Dashboard"
         tools:layout="@layout/fragment_staff_dashboard">
         <action
             android:id="@+id/action_staffDashboardFragment_to_reportDetailsFragment"
             app:destination="@id/reportDetailsFragment" />
-        <action
-            android:id="@+id/action_staffDashboardFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/staffDashboardFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
 </navigation>
