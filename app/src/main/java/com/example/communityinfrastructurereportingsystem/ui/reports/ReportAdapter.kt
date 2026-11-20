@@ -18,10 +18,10 @@ import java.util.Locale
 
 // Shared helpers (Person 6 uses them too)
 fun statusColor(status: String): Int = when (status) {
-    ReportStatus.PENDING -> Color.parseColor("#E65100")      // orange
-    ReportStatus.IN_PROGRESS -> Color.parseColor("#1565C0")  // blue
-    ReportStatus.RESOLVED -> Color.parseColor("#2E7D32")     // green
-    else -> Color.DKGRAY
+    ReportStatus.PENDING -> Color.parseColor("#FF9A4D")      // orange
+    ReportStatus.IN_PROGRESS -> Color.parseColor("#7DB3FF")  // blue
+    ReportStatus.RESOLVED -> Color.parseColor("#5ED68F")     // green
+    else -> Color.LTGRAY
 }
 
 fun formatDate(millis: Long): String =

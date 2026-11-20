@@ -2,11 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- The camera is optional: phones without one can still use the gallery -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <!-- Weather API (Lesson 11) -->
+    <!-- Weather API -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Report-status notifications (Android 13 and above) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- GPS location for a report (optional for the user) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +23,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CommunityInfrastructureReportingSystem">
 
-        <!-- The screen that opens when the app icon is tapped -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true"
@@ -38,5 +42,16 @@
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Lets the camera app save a photo into our private folder -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

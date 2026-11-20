@@ -1,7 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CommunityInfrastructureReportingSystem" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.CommunityInfrastructureReportingSystem" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/cirs_purple</item>
+        <item name="colorOnPrimary">@color/cirs_text</item>
+        <item name="colorPrimaryContainer">@color/cirs_purple_dark</item>
+        <item name="colorOnPrimaryContainer">@color/cirs_text</item>
+        <item name="colorSecondary">@color/cirs_orange</item>
+        <item name="colorOnSecondary">@color/cirs_text</item>
+        <item name="colorSecondaryContainer">@color/cirs_field</item>
+        <item name="colorOnSecondaryContainer">@color/cirs_text</item>
+        <item name="android:colorBackground">@color/cirs_black</item>
+        <item name="colorSurface">@color/cirs_surface</item>
+        <item name="colorOnSurface">@color/cirs_text</item>
+        <item name="colorSurfaceVariant">@color/cirs_card</item>
+        <item name="colorOnSurfaceVariant">@color/cirs_text_secondary</item>
+        <item name="colorOutline">@color/cirs_purple_light</item>
+        <item name="android:windowBackground">@color/cirs_black</item>
+        <item name="android:statusBarColor">@color/cirs_black</item>
+        <item name="android:navigationBarColor">@color/cirs_black</item>
     </style>
+
+    <style name="Theme.CommunityInfrastructureReportingSystem" parent="Base.Theme.CommunityInfrastructureReportingSystem" />
 </resources>

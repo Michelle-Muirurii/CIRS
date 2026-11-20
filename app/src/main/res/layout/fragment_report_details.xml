@@ -14,7 +14,7 @@
             android:id="@+id/photoImageView"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:background="#EEEEEE"
+            android:background="@color/cirs_field"
             android:contentDescription="Photo of the fault"
             android:scaleType="centerCrop"
             android:visibility="gone" />
