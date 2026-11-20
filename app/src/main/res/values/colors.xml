@@ -2,4 +2,21 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- CIRS palette: black, purple, dark blue, dark orange -->
+    <color name="cirs_black">#FF0A0A0F</color>
+    <color name="cirs_surface">#FF11111B</color>
+    <color name="cirs_card">#FF141B34</color>
+    <color name="cirs_field">#FF1C2547</color>
+    <color name="cirs_blue_dark">#FF0D1B3E</color>
+
+    <color name="cirs_purple">#FF8B5CF6</color>
+    <color name="cirs_purple_dark">#FF5B2EC4</color>
+    <color name="cirs_purple_light">#FFB79CFF</color>
+
+    <color name="cirs_orange">#FFC2410C</color>
+    <color name="cirs_orange_light">#FFFF9A4D</color>
+
+    <color name="cirs_text">#FFF2F2FA</color>
+    <color name="cirs_text_secondary">#FFB8BCD6</color>
 </resources>

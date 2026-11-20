@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="160dp"
-    android:orientation="vertical"
+    android:background="@color/cirs_purple_dark"
     android:gravity="bottom"
-    android:padding="16dp"
-    android:background="#1F4E79">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/headerNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/cirs_text"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -21,8 +21,8 @@
         android:id="@+id/headerEmailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="email"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp" />
+        android:textColor="@color/cirs_text"
+        android:textSize="14sp" />
 </LinearLayout>

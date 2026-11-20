@@ -244,9 +244,11 @@ class SubmitReportFragment : Fragment() {
     }
 
     // Glide loads the picture from its file path
+    // Glide loads the picture from its file path
     private fun showPhoto() {
         val path = photoPath ?: return
         if (_binding == null) return
+        binding.photoImageView.visibility = View.VISIBLE   // the picture box appears only once there is a photo
         Glide.with(this).load(File(path)).centerCrop().into(binding.photoImageView)
     }
 
